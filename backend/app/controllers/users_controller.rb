@@ -11,11 +11,16 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
-    if @user.save
-      render json: @user, status: :accepted
+    if User.find_by(email: user_params[:email])
+      @user = User.find_by(email: user_params[:email])
+      render json: @user
     else
-      render json: { errors: 'Failed to create User' }, status: :unprocessible_entity
+      @user = User.create(user_params)
+      if @user.save
+        render json: @user, status: :accepted
+      else
+        render json: { errors: 'Failed to create User' }, status: :unprocessible_entity
+      end
     end
   end
 
